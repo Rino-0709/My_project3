@@ -1,0 +1,125 @@
+openapi: 3.0.0
+info:
+  title: Интернет-магазин API
+  description: API для управления каталогом товаров и панелью администратора.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: Локальный сервер для панели администратора
+paths:
+  /products:
+    get:
+      summary: Получить список всех товаров
+      description: Возвращает список всех товаров из каталога.
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+    post:
+      summary: Добавить новый товар
+      description: Добавляет новый товар в каталог.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '201':
+          description: Товар успешно добавлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+  /products/{id}:
+    put:
+      summary: Обновить информацию о товаре
+      description: Обновляет информацию о товаре по его ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '200':
+          description: Товар успешно обновлен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+    delete:
+      summary: Удалить товар
+      description: Удаляет товар по его ID.
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Товар успешно удален
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Product deleted"
+components:
+  schemas:
+    Product:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        name:
+          type: string
+          example: "Смартфон Samsung Galaxy S21"
+        price:
+          type: number
+          example: 699
+        description:
+          type: string
+          example: "Флагманский смартфон с AMOLED-дисплеем и тройной камерой."
+        categories:
+          type: array
+          items:
+            type: string
+          example: ["Электроника", "Смартфоны"]
+    ProductInput:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Смартфон Samsung Galaxy S21"
+        price:
+          type: number
+          example: 699
+        description:
+          type: string
+          example: "Флагманский смартфон с AMOLED-дисплеем и тройной камерой."
+        categories:
+          type: array
+          items:
+            type: string
+          example: ["Электроника", "Смартфоны"]
+      required:
+        - name
+        - price
+        - description
+        - categories

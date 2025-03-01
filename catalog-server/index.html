@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Catalog</title>
+</head>
+<body>
+    <h1>Product Catalog</h1>
+    <div id="products"></div>
+
+    <script>
+        fetch('/products')
+            .then(response => response.json())
+            .then(products => {
+                const productsContainer = document.getElementById('products');
+                products.forEach(product => {
+                    const productCard = document.createElement('div');
+                    productCard.innerHTML = `
+                        <h2>${product.name}</h2>
+                        <p>Price: $${product.price}</p>
+                        <p>${product.description}</p>
+                        <p>Categories: ${product.categories.join(', ')}</p>
+                        <hr>
+                    `;
+                    productsContainer.appendChild(productCard);
+                });
+            });
+    </script>
+</body>
+</html>
