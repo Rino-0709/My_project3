@@ -28,22 +28,72 @@ app.get('/products', (req, res) => {
     });
 });
 
-app.post('/products', (req, res) => {
-    const newProduct = req.body;
-    fs.readFile(PRODUCTS_FILE, (err, data) => {
+const readProducts = (callback) => {
+    fs.readFile(PRODUCTS_FILE, 'utf8', (err, data) => {
         if (err) {
-            res.status(500).json({ error: 'Internal Server Error' });
+            callback(err, null);
         } else {
-            const products = JSON.parse(data);
-            products.push(newProduct);
-            fs.writeFile(PRODUCTS_FILE, JSON.stringify(products, null, 2), (err) => {
-                if (err) {
-                    res.status(500).json({ error: 'Internal Server Error' });
-                } else {
-                    res.status(201).json(newProduct);
-                }
-            });
+            try {
+                const products = JSON.parse(data);
+                callback(null, products);
+            } catch (parseErr) {
+                callback(parseErr, null);
+            }
         }
+    });
+};
+
+// Helper function to write products
+const writeProducts = (products, callback) => {
+    fs.writeFile(PRODUCTS_FILE, JSON.stringify(products, null, 2), 'utf8', (err) => {
+        if (err) {
+            callback(err);
+        } else {
+            callback(null);
+        }
+    });
+};
+
+app.post('/products', (req, res) => {
+    console.log("добавляю");
+    const newProducts = req.body;
+
+    readProducts((err, products) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'Failed to read products' });
+        }
+
+        // If products.json was empty or invalid, start with an empty array
+        products = Array.isArray(products) ? products : [];
+
+        console.log("добавляю");
+
+        const generateId = () => {
+            const maxId = products.length > 0 
+                ? Math.max(...products.map(p => p.id || 0)) 
+                : 0;
+            return maxId + 1;
+        };
+
+        if (!Array.isArray(newProducts)) {
+            const newProductWithId = { ...newProducts, id: generateId() };
+            products.push(newProductWithId);
+        } else {
+            const newProductsWithIds = newProducts.map(product => ({
+                ...product,
+                id: generateId()
+            }));
+            products = products.concat(newProductsWithIds);
+        }
+
+        writeProducts(products, (writeErr) => {
+            if (writeErr) {
+                console.error(writeErr);
+                return res.status(500).json({ error: 'Failed to write products' });
+            }
+            res.status(201).json({ message: 'Products added successfully', products });
+        });
     });
 });
 
