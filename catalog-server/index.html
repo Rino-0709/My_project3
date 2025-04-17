@@ -4,10 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Catalog</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Product Catalog</h1>
-    <div id="products"></div>
+<body class="bg-gray-100 font-sans">
+    <header class="bg-indigo-600 text-white py-6">
+        <h1 class="text-3xl font-bold text-center">Product Catalog</h1>
+    </header>
+    <main class="container mx-auto py-8">
+        <div id="products" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+    </main>
 
     <script>
         fetch('/products')
@@ -16,12 +21,12 @@
                 const productsContainer = document.getElementById('products');
                 products.forEach(product => {
                     const productCard = document.createElement('div');
+                    productCard.className = 'bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow duration-300';
                     productCard.innerHTML = `
-                        <h2>${product.name}</h2>
-                        <p>Price: $${product.price}</p>
-                        <p>${product.description}</p>
-                        <p>Categories: ${product.categories.join(', ')}</p>
-                        <hr>
+                        <h2 class="text-xl font-semibold text-indigo-600 mb-2">${product.name}</h2>
+                        <p class="text-gray-700"><span class="font-medium">Price:</span> $${product.price}</p>
+                        <p class="text-gray-600 mt-2">${product.description}</p>
+                        <p class="text-gray-500 mt-2"><span class="font-medium">Categories:</span> ${product.categories.join(', ')}</p>
                     `;
                     productsContainer.appendChild(productCard);
                 });
