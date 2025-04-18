@@ -4,7 +4,7 @@ info:
   description: API для управления каталогом товаров и панелью администратора.
   version: 1.0.0
 servers:
-  - url: http://localhost:8080
+  - url: http://localhost:3000
     description: Локальный сервер для панели администратора
 paths:
   /products:

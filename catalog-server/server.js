@@ -2,7 +2,7 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-const PORT = 3000;
+const PORT = 3080;
 const PRODUCTS_FILE = path.join(__dirname, '../admin-server/products.json');
 
 const server = http.createServer((req, res) => {
